@@ -1,0 +1,93 @@
+Q What is the use of app.use function in express.js?
+ANs - 	It is used to execute the middleware functions globally.
+	It means it run for all the request which come to server
+
+Q What is the use of next() function in express.js?
+Ans - 	The next parameter is a callback function which is use to pass control to the next middleware function in the stack.
+	When you call next(), it tells Express to move on to the next middleware function. 
+	If you don't call it, the request will hang and not move forward.
+
+const express = require('express');
+const app = express();
+
+// A middleware function that logs requests
+const logger = (req, res, next) => {
+  console.log(`${req.method} request to ${req.url}`);
+  next(); // Move to the next piece of code
+};
+
+// Use the logger for every request
+app.use(logger);
+
+// A simple route
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
+
+// Start the server
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+
+Q What is Request Pipeline in express.js?
+Ans - 	In Express js It is a series of middleware that hanles the HTTP request and pass controller to next function.
+
+Q What is Application and Router level middleware in express.js?
+Ans - Application Level Middleware
+
+Application level middleware is applied to the entire Express.js application. 
+It means that every incoming request, regardless of the route, will pass through this middleware function. 
+Application level middleware is typically used for tasks that need to be performed for every request, such as:
+
+Logging requests
+Authentication and authorization
+Compressing responses
+Serving static files
+To apply middleware at the application level, you use the app.use() method, like this
+const express = require('express');
+const app = express();
+
+// Application-level middleware
+app.use((req, res, next) => {
+    console.log('Request URL:', req.originalUrl);
+    next(); // Pass control to the next middleware or route
+});
+
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
+
+app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000');
+});
+
+
+Router Level Middleware
+
+Router level middleware, on the other hand, is applied to a specific router instance. 
+It means that only requests that are routed through that specific router will pass through this middleware function. 
+Router level middleware is typically used for tasks that are specific to a particular route or set of routes, such as:
+
+Validating input data for a specific route
+Authenticating users for a specific route
+Caching responses for a specific route
+const express = require('express');
+const app = express();
+const router = express.Router();
+
+// Router-level middleware
+router.use((req, res, next) => {
+    console.log('Router Middleware for:', req.originalUrl);
+    next(); // Pass control to the next middleware or route in this router
+});
+
+router.get('/users', (req, res) => {
+    res.send('User list');
+});
+
+app.use('/api', router); // Mount the router at /api
+
+app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000');
+});
+
